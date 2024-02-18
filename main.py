@@ -1,3 +1,4 @@
+import csv
 import turtle
 import pandas as pd
 
@@ -11,6 +12,7 @@ turtle.shape(image)
 write_turtle = turtle.Turtle()
 score = 0
 exclusion_list = []
+not_guessed = []
 
 
 def new_turtle(states):
@@ -22,6 +24,7 @@ def new_turtle(states):
 
 is_playing = True
 
+
 while is_playing:
     if score == 0:
         chosen_state = screen.textinput(title='Guess the State', prompt='Whats another state?').title()
@@ -32,6 +35,7 @@ while is_playing:
             chosen_state = screen.textinput(title='Guess the State', prompt='State already chosen!').title()
 
     for all_states in data['state']:
+        not_guessed.append(all_states)
         if chosen_state == all_states:
             state = data[data['state'] == chosen_state]
             exclusion_list.append(chosen_state)
@@ -40,4 +44,13 @@ while is_playing:
             new_turtle(chosen_state)
             score += 1
 
-screen.mainloop()
+    if chosen_state == 'Exit':
+        is_playing = False
+        final_list = list(set(not_guessed) - set(exclusion_list))
+        with open('guessed_states.csv', mode='w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for element in final_list:
+                writer.writerow([element])
+
+
+
